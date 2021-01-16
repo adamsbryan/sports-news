@@ -6,6 +6,7 @@ import FrontPage from './Components/FrontPage'
 
 export default function App() {
   const [date, setDate] = useState();
+  const [games, setGames] = useState([]);
 
   return(
     <div className="App">
@@ -14,7 +15,10 @@ export default function App() {
           <DateSetter date={date} setDate={setDate}/>   
         </Route>
         <Route path="/front">
-          <FrontPage date={date}/>
+          <FrontPage 
+            date={date} setDate={setDate}
+            games={games} setGames={setGames}
+          />
         </Route>
       </Switch>
     </div>
