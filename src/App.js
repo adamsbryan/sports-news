@@ -7,6 +7,7 @@ import FrontPage from './Components/FrontPage'
 export default function App() {
   const [date, setDate] = useState();
   const [games, setGames] = useState({});
+  const [standings, setStandings] = useState({});
 
   return(
     <div className="App">
@@ -18,6 +19,7 @@ export default function App() {
           <FrontPage 
             date={date} setDate={setDate}
             games={games} setGames={setGames}
+            standings={standings} setStandings={setStandings}
           />
         </Route>
       </Switch>
