@@ -1,29 +1,31 @@
-import React, {useEffect} from 'react';
-import {useHistory} from 'react-router-dom';
+import React, {useEffect, Component} from 'react';
 import axios from 'axios';
+import ScoreCard from './ScoreCard';
 
-export default function FrontPage(props) {
-    let history = useHistory();
-    let newDate = props.date.replace(/-/g, "/");
+export default function FrontPage({date, setDate, games, setGames}) {
+    let newDate = date.replace(/-/g, "/");
+    const items = [];
 
     useEffect(() => {
         axios
             .get(`https://api.sportradar.us/nba/trial/v7/en/games/${newDate}/schedule.json?api_key=df8gew5yxy9zaqhjdxrsr5hs`)
             .then(response => {
-                props.setGames(response.data);
-                console.log(props.games);
+                setGames(response.data);
             })
             .catch(error => {
                 console.log("theres something wrong", error);
             });
     }, []);
 
-    console.log(props.games);
-    
-    return (
+    if(games && games.games){
+        for(let i=0; i<games.games.length; i++){
+            items.push(<ScoreCard game={games.games[i]}/>)
+        } 
+    }
+
+    return(
         <div>
-            {props.date}
-            {console.log(newDate)}
+            {items}   
         </div>
     )
 };
