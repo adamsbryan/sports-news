@@ -1,6 +1,7 @@
-import React, {useEffect, Component} from 'react';
+import React, {useEffect} from 'react';
 import axios from 'axios';
 import ScoreCard from './ScoreCard';
+import logo from '../images/logo.png';
 
 export default function FrontPage({date, setDate, games, setGames}) {
     let newDate = date.replace(/-/g, "/");
@@ -18,14 +19,22 @@ export default function FrontPage({date, setDate, games, setGames}) {
     }, []);
 
     if(games && games.games){
+        console.log(games);
         for(let i=0; i<games.games.length; i++){
             items.push(<ScoreCard game={games.games[i]}/>)
         } 
     }
 
     return(
-        <div>
-            {items}   
+        <div className="front-page">
+            <div className="container">
+                <img src={logo}></img>    
+            </div>
+            
+            <div className="container">
+                {items}     
+            </div>
+              
         </div>
     )
 };

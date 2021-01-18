@@ -6,7 +6,7 @@ import FrontPage from './Components/FrontPage'
 
 export default function App() {
   const [date, setDate] = useState();
-  const [games, setGames] = useState([]);
+  const [games, setGames] = useState({});
 
   return(
     <div className="App">
