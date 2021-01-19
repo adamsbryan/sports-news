@@ -2,13 +2,28 @@ import React, {useEffect} from 'react';
 import axios from 'axios';
 import ScoreCard from './ScoreCard';
 import logo from '../images/logo.png';
+import Sliding from './Sliding';
 
-export default function FrontPage({date, setDate, games, setGames, standings, setStandings}) {
+export default function FrontPage({date, setDate, games, setGames, standings, setStandings, todayData, setTodayData}) {
     let newDate = date.replace(/-/g, "/");
-    const items = [];
     let year = newDate[0]+newDate[1]+newDate[2]+newDate[3];
     let month = newDate[5]+newDate[6];
     let season = 0;
+    const items = [];
+    const itemsBar = [];
+
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    
+    today = yyyy + '/' + mm + '/' + dd;
+
+    let records = Array.from({length:30}, () => ({
+        name: "",
+        wins: 0,
+        losses: 0
+    }))
 
     if(year===2014 && month<=6){
         season = 2013;
@@ -27,9 +42,8 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
     } else{
         season = 2020;
     }
-    
 
-    useEffect(() => {
+   useEffect(() => {
         axios
             .get(`https://api.sportradar.us/nba/trial/v7/en/games/${newDate}/schedule.json?api_key=df8gew5yxy9zaqhjdxrsr5hs`)
             .then(response => {
@@ -41,22 +55,53 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
     }, []);
 
     useEffect(() => {
-        axios
-            .get(`http://api.sportradar.us/nba/trial/v7/en/seasons/${season}/REG/standings.json?api_key=df8gew5yxy9zaqhjdxrsr5hs`)
-            .then(response => {
-                setStandings(response.data);
-            })
-            .catch(error => {
-                console.log("theres something wrong", error);
-            });
+        setTimeout(function(){
+            axios
+                .get(`https://api.sportradar.us/nba/trial/v7/en/games/${today}/schedule.json?api_key=df8gew5yxy9zaqhjdxrsr5hs`)
+                .then(response => {
+                    setTodayData(response.data);
+                })
+                .catch(error => {
+                    console.log("theres something wrong", error);
+                });    
+        }, 2000)
     }, []);
 
-    if(games && games.games){
-        console.log(games);
-        console.log(standings);
+    useEffect(() => {
+        setTimeout(function(){
+            axios
+                .get(`http://api.sportradar.us/nba/trial/v7/en/seasons/${season}/REG/standings.json?api_key=df8gew5yxy9zaqhjdxrsr5hs`)
+                .then(response => {
+                    setStandings(response.data);
+                })
+                .catch(error => {
+                    console.log("theres something wrong", error);
+                });    
+        }, 4000)
+    }, []);
+
+    if(standings.conferences){
+        let i = 0;
+        for(let j=0; j<standings.conferences.length; j++){
+            for(let k=0; k<standings.conferences[j].divisions.length; k++){
+                for(let l=0; l<standings.conferences[j].divisions[k].teams.length; l++){
+                    records[i].name = (standings.conferences[j].divisions[k].teams[l].market);
+                    records[i].name = (records[i].name + " " + standings.conferences[j].divisions[k].teams[l].name);
+                    records[i].wins = (standings.conferences[j].divisions[k].teams[l].wins);
+                    records[i].losses = (standings.conferences[j].divisions[k].teams[l].losses);
+                    i++;
+                }        
+            }       
+        }     
+    }
+
+    if(games.games && todayData.games){
         for(let i=0; i<games.games.length; i++){
-            items.push(<ScoreCard game={games.games[i]}/>)
+            items.push(<ScoreCard game={games.games[i]} record={records}/>)
         } 
+        for(let i=0; i<todayData.games.length; i++){
+            itemsBar.push(<Sliding game={todayData.games[i]}/>)
+        }
     }
 
     return(
@@ -64,10 +109,12 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
             <div className="container">
                 <img src={logo}></img>    
             </div>
+            <div className="slidingBar">
+                {itemsBar}
+            </div>
             <div className="container">
                 {items}     
             </div>
-              
         </div>
     )
 };

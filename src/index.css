@@ -38,19 +38,48 @@ img{
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  border: 1px solid aqua;
 }
 
 .container img{
-  width: 30%;
+  width: 35%;
 }
 
 .score-card{
   width: 40%;
-  padding: 2%;
-  margin: 3px;
-  border: 1px solid white;
+  padding: 1%;
+  border: 1px solid #272927;
+  display: flex;
+  flex-direction: column;
+  background-color: #191a19;
+}
+
+.home-team{
+  display: flex;
+  justify-content: space-between;
+}
+
+.away-team{
+  display: flex;
+  justify-content: space-between;
+}
+
+.record{
+  padding-left: 45px;
+}
+
+.right-side{
   display: flex;
   align-items: center;
-  flex-direction: column;
+  padding-bottom: 40px;
+}
+
+.team{
+  display: flex;
+  align-items: center;
+  height: 50%;
+}
+
+.sliding-card{
+  border: 1px solid white;
+  width: 40%;
 }

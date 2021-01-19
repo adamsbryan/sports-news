@@ -8,6 +8,7 @@ export default function App() {
   const [date, setDate] = useState();
   const [games, setGames] = useState({});
   const [standings, setStandings] = useState({});
+  const [todayData, setTodayData] = useState({});
 
   return(
     <div className="App">
@@ -20,6 +21,7 @@ export default function App() {
             date={date} setDate={setDate}
             games={games} setGames={setGames}
             standings={standings} setStandings={setStandings}
+            todayData={todayData} setTodayData={setTodayData}
           />
         </Route>
       </Switch>
