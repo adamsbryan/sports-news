@@ -4,7 +4,7 @@ import ScoreCard from './ScoreCard';
 import logo from '../images/logo.png';
 import Sliding from './Sliding';
 
-export default function FrontPage({date, setDate, games, setGames, standings, setStandings, todayData, setTodayData}) {
+export default function FrontPage({date, setDate, games, setGames, standings, setStandings, todayData, setTodayData, yesterdayData, setYesterdayData}) {
     let newDate = date.replace(/-/g, "/");
     let year = newDate[0]+newDate[1]+newDate[2]+newDate[3];
     let month = newDate[5]+newDate[6];
@@ -13,11 +13,15 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
     const itemsBar = [];
 
     let today = new Date();
+    let yesterday = new Date();
     let dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
+    let dd2 = dd-1;
     
     today = yyyy + '/' + mm + '/' + dd;
+    yesterday = yyyy + '/' + mm + '/' + dd2;
+    console.log(yesterday);
 
     let records = Array.from({length:30}, () => ({
         name: "",
@@ -70,6 +74,19 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
     useEffect(() => {
         setTimeout(function(){
             axios
+                .get(`https://api.sportradar.us/nba/trial/v7/en/games/${yesterday}/schedule.json?api_key=df8gew5yxy9zaqhjdxrsr5hs`)
+                .then(response => {
+                    setYesterdayData(response.data);
+                })
+                .catch(error => {
+                    console.log("theres something wrong", error);
+                });    
+        }, 3000)
+    }, []);
+
+    useEffect(() => {
+        setTimeout(function(){
+            axios
                 .get(`http://api.sportradar.us/nba/trial/v7/en/seasons/${season}/REG/standings.json?api_key=df8gew5yxy9zaqhjdxrsr5hs`)
                 .then(response => {
                     setStandings(response.data);
@@ -95,25 +112,36 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
         }     
     }
 
-    if(games.games && todayData.games){
+    if(games.games && todayData.games && yesterdayData.games){
+        console.log(todayData);
         for(let i=0; i<games.games.length; i++){
             items.push(<ScoreCard game={games.games[i]} record={records}/>)
         } 
+        for(let i=0; i<yesterdayData.games.length; i++){
+            itemsBar.push(<Sliding yesterdayGame={yesterdayData.games[i]}/>)
+        }
         for(let i=0; i<todayData.games.length; i++){
-            itemsBar.push(<Sliding game={todayData.games[i]}/>)
+            itemsBar.push(<Sliding todayGame={todayData.games[i]} record={records}/>)
         }
     }
 
+    
+    // after 10 seconds (the time it takes the first card to slide off the page)
+    // copy the first item in itemsBar array and push it to the back of the array
+    // then pop off that item. continue to do so for every 2 seconds after 
+
     return(
         <div className="front-page">
-            <div className="container">
+            <div className="logo-container">
                 <img src={logo}></img>    
             </div>
-            <div className="slidingBar">
+            <div className="sliding-bar">
                 {itemsBar}
             </div>
-            <div className="container">
-                {items}     
+            <div className="bot-section">
+                <div className="card-container">
+                    {items}     
+                </div>    
             </div>
         </div>
     )
