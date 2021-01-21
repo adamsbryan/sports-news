@@ -1,4 +1,5 @@
 import React from 'react';
+import NBALogos from './Logos';
 
 export default function Sliding({todayGame, yesterdayGame, record}) {
     let homeWins = 0;
@@ -17,15 +18,16 @@ export default function Sliding({todayGame, yesterdayGame, record}) {
                 awayLosses = record[i].losses;
             }
         }
-
+        
         return(
             <div className="sliding-card">
                 <p>Upcoming</p>
                 <div className="first-team">
                     <div className="team-alias">
+                        <NBALogos smallTeam={todayGame.home.alias}/>
                         {todayGame.home.alias}    
                     </div>
-                    <div className="record">
+                    <div>
                         (
                         {homeWins}
                         -
@@ -35,9 +37,10 @@ export default function Sliding({todayGame, yesterdayGame, record}) {
                 </div>
                 <div className="second-team">
                 <div className="team-alias">
+                        <NBALogos smallTeam={todayGame.away.alias}/>
                         {todayGame.away.alias}    
                     </div>
-                    <div className="record">
+                    <div>
                         (
                         {awayWins}
                         -
@@ -47,12 +50,13 @@ export default function Sliding({todayGame, yesterdayGame, record}) {
                 </div>
             </div>
         )    
-    } else {
+    } else if(yesterdayGame.home_points){
         return(
             <div className="sliding-card">
                 <p>Final</p>
                 <div className="first-team">
                     <div className="team-alias">
+                        <NBALogos smallTeam={yesterdayGame.home.alias}/>
                         {yesterdayGame.home.alias}    
                     </div>
                     <div className="team-points">
@@ -61,10 +65,35 @@ export default function Sliding({todayGame, yesterdayGame, record}) {
                 </div>
                 <div className="second-team">
                 <div className="team-alias">
+                        <NBALogos smallTeam={yesterdayGame.away.alias}/>
                         {yesterdayGame.away.alias}    
                     </div>
                     <div className="team-points">
                         {yesterdayGame.away_points}      
+                    </div>
+                </div>
+            </div>
+        )    
+    } else {
+        return(
+            <div className="sliding-card">
+                <p>Final</p>
+                <div className="first-team">
+                    <div className="team-alias">
+                        <NBALogos smallTeam={yesterdayGame.home.alias}/>
+                        {yesterdayGame.home.alias}    
+                    </div>
+                    <div className="team-points">
+                        PPD     
+                    </div>
+                </div>
+                <div className="second-team">
+                <div className="team-alias">
+                        <NBALogos smallTeam={yesterdayGame.away.alias}/>
+                        {yesterdayGame.away.alias}    
+                    </div>
+                    <div className="team-points">
+                        PPD      
                     </div>
                 </div>
             </div>

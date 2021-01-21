@@ -3,6 +3,7 @@ import axios from 'axios';
 import ScoreCard from './ScoreCard';
 import logo from '../images/logo.png';
 import Sliding from './Sliding';
+import styled, {keyframes} from 'styled-components'
 
 export default function FrontPage({date, setDate, games, setGames, standings, setStandings, todayData, setTodayData, yesterdayData, setYesterdayData}) {
     let newDate = date.replace(/-/g, "/");
@@ -11,6 +12,7 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
     let season = 0;
     const items = [];
     const itemsBar = [];
+    let itemsBarLength = 0;
 
     let today = new Date();
     let yesterday = new Date();
@@ -18,6 +20,7 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
     let dd2 = dd-1;
+    let selectedDate = `${newDate[5]}${newDate[6]}/${newDate[8]}${newDate[9]}`
     
     today = yyyy + '/' + mm + '/' + dd;
     yesterday = yyyy + '/' + mm + '/' + dd2;
@@ -117,28 +120,57 @@ export default function FrontPage({date, setDate, games, setGames, standings, se
         for(let i=0; i<games.games.length; i++){
             items.push(<ScoreCard game={games.games[i]} record={records}/>)
         } 
+
+        itemsBar.push(<div className="sliding-date"><h4>{mm + "/" + dd2}</h4></div>)
+        itemsBar.length += 7;
+        
         for(let i=0; i<yesterdayData.games.length; i++){
             itemsBar.push(<Sliding yesterdayGame={yesterdayData.games[i]}/>)
+            itemsBarLength += 10;
         }
+
+        itemsBar.push(<div className="slider-gap"></div>)
+        itemsBarLength += 21;
+        itemsBar.push(<div className="sliding-date"><h4>Today</h4></div>)
+        itemsBarLength += 7;
+
         for(let i=0; i<todayData.games.length; i++){
             itemsBar.push(<Sliding todayGame={todayData.games[i]} record={records}/>)
+            itemsBarLength += 10;
         }
+
+        itemsBar.push(<div className="slider-gap"></div>)
+        itemsBarLength += 21;
     }
 
-    
-    // after 10 seconds (the time it takes the first card to slide off the page)
-    // copy the first item in itemsBar array and push it to the back of the array
-    // then pop off that item. continue to do so for every 2 seconds after 
+    const kf = keyframes`
+        0%{
+            transform: translate3d(1000px, 0, 0);
+        }
+        100%{
+            transform: translate3d(-2750px, 0, 0);
+        }    
+    `
+
+    const StyledDiv = styled.div`
+        width: ${itemsBarLength}rem;
+        display: flex;
+        flex-direction: row;
+        animation: ${kf} 60s linear infinite;
+    `
 
     return(
         <div className="front-page">
             <div className="logo-container">
                 <img src={logo}></img>    
             </div>
-            <div className="sliding-bar">
-                {itemsBar}
+            <div className="slider-container">
+                <StyledDiv className="sliding-bar">
+                    {itemsBar}
+                </StyledDiv>
             </div>
             <div className="bot-section">
+                <h3>Scores for {selectedDate}</h3>
                 <div className="card-container">
                     {items}     
                 </div>    
